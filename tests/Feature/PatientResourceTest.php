@@ -30,7 +30,7 @@ class PatientResourceTest extends TestCase
     {
         auth()->logout();
 
-        $this->get('/patients')->assertRedirect('/login');
+        $this->get('/patienten')->assertRedirect('/login');
     }
 
     public function test_the_list_shows_active_patients_by_default(): void
@@ -38,7 +38,7 @@ class PatientResourceTest extends TestCase
         $active = Patient::factory()->create();
         $deregistered = Patient::factory()->deregisteredOn(now())->create();
 
-        $this->get('/patients')->assertOk();
+        $this->get('/patienten')->assertOk();
 
         Livewire::test(ListPatients::class)
             ->assertCanSeeTableRecords([$active])

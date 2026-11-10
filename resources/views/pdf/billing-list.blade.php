@@ -12,8 +12,9 @@
         body { font-family: "DejaVu Sans", sans-serif; font-size: 9pt; color: #111; }
         h1 { font-size: 15pt; margin: 0 0 2mm 0; }
         .meta { color: #555; margin-bottom: 6mm; }
-        h2 { font-size: 11pt; margin: 6mm 0 2mm 0; padding-bottom: 1mm; border-bottom: 1.5px solid #111; }
-        h2 .count { font-weight: normal; color: #555; font-size: 9pt; }
+        table.group { margin-top: 5mm; }
+        th.group-title { font-size: 11pt; font-weight: bold; color: #111; border-bottom: 1.5px solid #111; padding: 0 0 1mm 0; }
+        th.group-title .count { font-weight: normal; color: #555; font-size: 9pt; }
         table { width: 100%; border-collapse: collapse; }
         th { text-align: left; font-size: 8pt; color: #555; font-weight: normal; border-bottom: 1px solid #999; padding: 1.5mm 1.5mm; }
         td { padding: 1.8mm 1.5mm; border-bottom: 0.5px solid #ccc; vertical-align: middle; }
@@ -28,7 +29,6 @@
         .summary td { border-bottom: 0.5px solid #ccc; }
         .summary .total td { font-weight: bold; border-top: 1.5px solid #111; border-bottom: none; }
         footer { position: fixed; bottom: -10mm; left: 0; right: 0; font-size: 7.5pt; color: #777; }
-        footer .page:after { content: "Seite " counter(page) " von " counter(pages); }
     </style>
 </head>
 <body>
@@ -36,7 +36,6 @@
         <table>
             <tr>
                 <td style="border: none; padding: 0;">Therapie Aktiv – Abrechnung {{ $quarter->label() }}</td>
-                <td style="border: none; padding: 0; text-align: right;"><span class="page"></span></td>
             </tr>
         </table>
     </footer>
@@ -49,9 +48,11 @@
     </div>
 
     @forelse ($groups as $insurer => $lines)
-        <h2>{{ $insurer }} <span class="count">· {{ $lines->count() }} Patienten</span></h2>
-        <table>
+        <table class="group">
             <thead>
+                <tr>
+                    <th class="group-title" colspan="8">{{ $insurer }} <span class="count">· {{ $lines->count() }} Patienten</span></th>
+                </tr>
                 <tr>
                     <th class="num">#</th>
                     <th>Name</th>

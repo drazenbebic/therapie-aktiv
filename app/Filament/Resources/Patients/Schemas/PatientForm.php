@@ -23,6 +23,7 @@ class PatientForm
         return $schema
             ->components([
                 Section::make('Patient')
+                    ->columnSpanFull()
                     ->columns(2)
                     ->schema([
                         TextInput::make('last_name')
@@ -60,6 +61,7 @@ class PatientForm
                             ->required(),
                     ]),
                 Section::make('Therapie Aktiv')
+                    ->columnSpanFull()
                     ->columns(3)
                     ->schema([
                         DatePicker::make('enrolled_at')
@@ -75,6 +77,7 @@ class PatientForm
                             ->requiredWith('deregistered_at'),
                     ]),
                 Section::make('Weitere Angaben')
+                    ->columnSpanFull()
                     ->columns(2)
                     ->collapsible()
                     ->schema([
