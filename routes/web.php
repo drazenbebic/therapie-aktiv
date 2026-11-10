@@ -1,7 +1,5 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
-
-Route::get('/', function () {
-    return view('welcome');
-});
+/*
+ * All pages are served by the Filament panel (see AdminPanelProvider), mounted at "/".
+ */

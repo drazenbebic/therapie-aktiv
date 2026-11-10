@@ -6,6 +6,9 @@ use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
+/**
+ * Seeds a local demo login and fake patients. Never run against the real registry.
+ */
 class DatabaseSeeder extends Seeder
 {
     use WithoutModelEvents;
@@ -15,11 +18,11 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
-
         User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
+            'name' => 'Demo',
+            'email' => 'demo@example.test',
         ]);
+
+        $this->call(PatientSeeder::class);
     }
 }

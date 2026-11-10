@@ -2,6 +2,8 @@
 
 namespace App\Support;
 
+use Carbon\CarbonImmutable;
+
 /**
  * Austrian social insurance number (Sozialversicherungsnummer), as printed on the e-card.
  *
@@ -49,6 +51,31 @@ final class SvNumber
     public static function birthDatePart(string $value): string
     {
         return substr(self::normalize($value), 4, 6);
+    }
+
+    /**
+     * The birth date encoded in the number, or null if the date part isn't a real date.
+     * Two-digit years resolve to the most recent matching year that isn't after $today.
+     */
+    public static function birthDate(string $value, ?CarbonImmutable $today = null): ?CarbonImmutable
+    {
+        $part = self::birthDatePart($value);
+
+        if (! preg_match('/^(\d{2})(\d{2})(\d{2})$/', $part, $matches)) {
+            return null;
+        }
+
+        [, $day, $month, $shortYear] = array_map('intval', $matches);
+        $today ??= CarbonImmutable::today();
+        $thisCentury = intdiv($today->year, 100) * 100 + $shortYear;
+
+        foreach ([$thisCentury, $thisCentury - 100] as $year) {
+            if (checkdate($month, $day, $year) && CarbonImmutable::create($year, $month, $day)->lessThanOrEqualTo($today)) {
+                return CarbonImmutable::create($year, $month, $day)->startOfDay();
+            }
+        }
+
+        return null;
     }
 
     /**

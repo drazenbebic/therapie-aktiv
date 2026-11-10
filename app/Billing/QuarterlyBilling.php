@@ -36,19 +36,34 @@ final class QuarterlyBilling
         $insurerOrder = array_flip(array_map(fn (Insurer $insurer): string => $insurer->value, Insurer::cases()));
 
         return $patients
-            ->map(function (Patient $patient) use ($quarter): BillingLine {
-                $record = $patient->billingRecords->first();
-                $programmeQuarter = $record->programme_quarter ?? $patient->programmeQuarterIn($quarter);
-
-                return new BillingLine(
-                    patient: $patient,
-                    programmeQuarter: $programmeQuarter,
-                    code: $record->code ?? BillingRules::codeFor($programmeQuarter),
-                    record: $record,
-                );
-            })
+            ->map(fn (Patient $patient): ?BillingLine => $this->lineFor($patient, $quarter))
+            ->filter()
             ->sortBy(fn (BillingLine $line): int => $insurerOrder[$line->patient->insurer->value], SORT_NUMERIC)
             ->values();
+    }
+
+    /**
+     * The billing line of one patient for the quarter, or null if the patient isn't enrolled in it.
+     *
+     * Uses the patient's loaded billing records when available, so callers can eager-load them.
+     */
+    public function lineFor(Patient $patient, Quarter $quarter): ?BillingLine
+    {
+        $record = $patient->billingRecords->first(
+            fn (BillingRecord $record): bool => $record->year === $quarter->year && $record->quarter === $quarter->number,
+        );
+
+        if ($record !== null) {
+            return new BillingLine($patient, $record->programme_quarter, $record->code, $record);
+        }
+
+        $programmeQuarter = $patient->programmeQuarterIn($quarter);
+
+        if ($programmeQuarter === null) {
+            return null;
+        }
+
+        return new BillingLine($patient, $programmeQuarter, BillingRules::codeFor($programmeQuarter));
     }
 
     /**

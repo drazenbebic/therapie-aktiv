@@ -3,6 +3,7 @@
 namespace Tests\Unit;
 
 use App\Support\SvNumber;
+use Carbon\CarbonImmutable;
 use PHPUnit\Framework\TestCase;
 
 class SvNumberTest extends TestCase
@@ -41,6 +42,27 @@ class SvNumberTest extends TestCase
     public function test_it_reads_the_birth_date_part(): void
     {
         $this->assertSame('010180', SvNumber::birthDatePart('1237010180'));
+    }
+
+    public function test_it_derives_the_birth_date_in_the_past(): void
+    {
+        $today = CarbonImmutable::parse('2026-11-11');
+
+        $this->assertSame('1980-01-01', SvNumber::birthDate('1237010180', $today)?->toDateString());
+        $this->assertSame('2005-03-12', SvNumber::birthDate('1230120305', $today)?->toDateString());
+        $this->assertSame('1940-12-24', SvNumber::birthDate('1230241240', $today)?->toDateString());
+    }
+
+    public function test_it_returns_no_birth_date_when_the_date_part_is_not_a_real_date(): void
+    {
+        // Persons with unknown birth dates get e.g. month 13+.
+        $this->assertNull(SvNumber::birthDate('1230011380'));
+        $this->assertNull(SvNumber::birthDate('123'));
+    }
+
+    public function test_it_formats_like_the_e_card(): void
+    {
+        $this->assertSame('1237 010180', SvNumber::format('1237010180'));
     }
 
     public function test_it_computes_the_check_digit(): void
