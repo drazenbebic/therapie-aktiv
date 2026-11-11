@@ -4,7 +4,7 @@ set -e
 
 if [ -z "$APP_KEY" ]; then
     echo "APP_KEY is not set. Generate one with:" >&2
-    echo "  docker compose run --rm --no-deps --entrypoint php app artisan key:generate --show" >&2
+    echo "  docker compose -f compose.production.yaml run --rm --no-deps --entrypoint php app artisan key:generate --show" >&2
     echo "and put it into .env.production." >&2
     exit 1
 fi
