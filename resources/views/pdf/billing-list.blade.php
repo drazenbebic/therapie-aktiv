@@ -43,7 +43,7 @@
     <h1>Therapie Aktiv – Abrechnung {{ $quarter->label() }}</h1>
     <div class="meta">
         Quartal {{ $quarter->start()->format('d.m.Y') }} – {{ $quarter->end()->format('d.m.Y') }}
-        · {{ $totalRegular + $totalAnnual }} Patienten ({{ $totalRegular }}× 97, {{ $totalAnnual }}× 97a)
+        · {{ trans_choice('billing.patients', $totalRegular + $totalAnnual) }} ({{ $totalRegular }}× 97, {{ $totalAnnual }}× 97a)
         · erstellt am {{ $generatedAt->format('d.m.Y H:i') }}
     </div>
 
@@ -51,7 +51,7 @@
         <table class="group">
             <thead>
                 <tr>
-                    <th class="group-title" colspan="8">{{ $insurer }} <span class="count">· {{ $lines->count() }} Patienten</span></th>
+                    <th class="group-title" colspan="8">{{ $insurer }} <span class="count">· {{ trans_choice('billing.patients', $lines->count()) }}</span></th>
                 </tr>
                 <tr>
                     <th class="num">#</th>

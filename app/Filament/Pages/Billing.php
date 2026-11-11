@@ -77,7 +77,7 @@ class Billing extends Page implements HasTable
 
         $parts = [
             $quarter->start()->format('d.m.Y').' – '.$quarter->end()->format('d.m.Y'),
-            $lines->count().' Patienten',
+            trans_choice('billing.patients', $lines->count()),
             $lines->where('code', BillingCode::Regular)->count().'× 97, '.$lines->where('code', BillingCode::Annual)->count().'× 97a',
         ];
 
@@ -192,7 +192,7 @@ class Billing extends Page implements HasTable
                     $this->resetTable();
 
                     Notification::make()
-                        ->title("{$count} Patienten als abgerechnet markiert")
+                        ->title(trans_choice('billing.patients', $count).' als abgerechnet markiert')
                         ->success()
                         ->send();
                 }),

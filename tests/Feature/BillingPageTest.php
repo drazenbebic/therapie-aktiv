@@ -78,6 +78,16 @@ class BillingPageTest extends TestCase
         $this->assertSame(3, BillingRecord::query()->where('year', 2026)->where('quarter', 4)->count());
     }
 
+    public function test_a_single_patient_is_counted_in_the_singular(): void
+    {
+        Patient::factory()->enrolledOn('2026-05-05')->create();
+
+        Livewire::test(Billing::class)
+            ->assertSee('1 Patient ·')
+            ->callAction('markAsBilled')
+            ->assertNotified('1 Patient als abgerechnet markiert');
+    }
+
     public function test_billing_can_be_undone(): void
     {
         Patient::factory()->count(2)->enrolledOn('2026-05-05')->create();
